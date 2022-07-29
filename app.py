@@ -22,6 +22,3 @@ def subscribe():
 @app.route('/api/sendEmails', methods=['POST'])
 def send_emails():
     return jsonify(todo=True)
-
-
-app.run(debug=False)
