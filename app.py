@@ -1,40 +1,37 @@
-from datetime import datetime as dt
+import json
 
 from flask import Flask, request, jsonify, render_template
+from flask_mail import Mail, Message
 from werkzeug.exceptions import HTTPException, Conflict
 
-from src.clients.api_call import get_rate_api_call
+from src.clients.api_call import get_msg_rate
 from src.clients.registry import EmailRegistry
+from src.config.flask_config import FlaskConfig
 from src.helpers import err_response_factory_helper
 from src.logger import logger
 
 app = Flask(__name__)
 
-app.config["JSON_SORT_KEYS"] = False
+app.config.from_object(FlaskConfig)
+
+mail = Mail(app)
 
 email_registry = EmailRegistry()
 
 
 @app.route('/')
-def get_root():
+def index():
     return render_template('index.html')
 
 
 @app.route('/api/rate', defaults={'currency_from': 'BTC', 'currency_to': 'UAH'})
 @app.route('/api/rate/<currency_from>/<currency_to>')
 def get_rate(currency_from, currency_to):
-    data = get_rate_api_call(currency_from, currency_to)
-    rate = data.get('rate')
-    timestamp = data.get('timestamp')
-    res = {
-        "description": "exchange rate",
-        "currency_from": f"{currency_from}",
-        "currency_to": f"{currency_to}",
-        "rate": rate,
-        "timestamp": f"{dt.fromtimestamp(timestamp)}",
-        "status": "success"
-    }
-    return jsonify(res)
+    # TODO:
+    # api = ClientAPI()
+    # msg = api.get_msg(currency_from, currency_to)
+    msg = get_msg_rate(currency_from, currency_to)
+    return jsonify(msg)
 
 
 @app.route('/api/subscribe', methods=['POST'])
@@ -55,9 +52,18 @@ def subscribe():
     raise Conflict(email)
 
 
-@app.route('/api/sendEmails', methods=['POST'])
-def send_emails():
-    return jsonify(todo=True)
+@app.route('/api/sendEmails', defaults={'currency_from': 'BTC', 'currency_to': 'UAH'}, methods=['POST'])
+@app.route('/api/sendEmails/<currency_from>/<currency_to>', methods=['POST'])
+def send_emails(currency_from, currency_to):
+    # msg = get_msg_rate(currency_from, currency_to)
+    msg = {"description": "exchange rate", "currency_from": "BTC", "currency_to": "UAH", "rate": 887743.141032,
+           "timestamp": "2022-07-30 15:16:03", "status": "success"}
+    m = Message(subject=f'Rate for {currency_from}/{currency_to}',
+                body=json.dumps(msg, indent=4),
+                sender=app.config['MAIL_USERNAME'],
+                recipients=email_registry.emails)
+    mail.send(m)
+    return jsonify(msg_sent=True)
 
 
 @app.errorhandler(Conflict)
