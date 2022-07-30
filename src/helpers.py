@@ -1,4 +1,5 @@
 import json
+import re
 
 from src.logger import logger
 
@@ -11,3 +12,8 @@ def err_response_factory_helper(e, msg):
     logger.error(f'Error: {msg}')
 
     return response
+
+
+def email_validation(email):
+    regex = r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'
+    return bool(re.fullmatch(regex, email))

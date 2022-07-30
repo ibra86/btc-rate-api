@@ -1,0 +1,12 @@
+api:
+  url: https://api.apilayer.com/exchangerates_data/convert
+  key: $api_key
+  default_currency_from: 'BTC'
+  default_currency_to: 'UAH'
+email:
+  user: $email_user
+  pass: $email_pass
+db:
+  csv:
+    dir_path: 'db'
+    file_name: 'email_registry.csv'

@@ -9,9 +9,11 @@ flake8 = "==4.0.1"
 gunicorn = "==20.1.0"
 requests = "*"
 flask-mail = "*"
+envyaml = "*"
 
 [dev-packages]
 pytest-mock = "==3.7.0"
+pytest-env = "*"
 
 [requires]
 python_version = "3.9"
