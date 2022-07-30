@@ -60,8 +60,6 @@ def subscribe():
 @app.route('/api/sendEmails/<currency_from>/<currency_to>', methods=['POST'])
 def send_emails(currency_from, currency_to):
     msg = api.get_msg(currency_from, currency_to)
-    # msg = {"description": "exchange rate", "currency_from": "BTC", "currency_to": "UAH", "rate": 887743.141032,
-    #        "timestamp": "2022-07-30 15:16:03", "status": "success"}
     m = Message(subject=f'Rate for {currency_from}/{currency_to}',
                 body=json.dumps(msg, indent=4),
                 sender=app.config['MAIL_USERNAME'],

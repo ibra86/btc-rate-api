@@ -7,4 +7,4 @@ docker build -t flask_app .
 docker run -p 5000:5000 flask_app
 ```
 
-App is available on ```http://localhost:5000```.
+App is in a dev state and running on ```http://localhost:5000```.
