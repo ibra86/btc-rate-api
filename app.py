@@ -1,6 +1,7 @@
 import json
 
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 from flask_mail import Mail, Message
 from werkzeug.exceptions import HTTPException, Conflict
 
@@ -11,6 +12,7 @@ from src.helpers import err_response_factory_helper, email_validation
 from src.logger import logger
 
 app = Flask(__name__)
+CORS(app)
 
 app.config.from_object(FlaskConfig)
 
@@ -66,7 +68,16 @@ def send_emails(currency_from, currency_to):
                 recipients=email_registry.emails)
     mail.send(m)
     logger.info(f'sent currency rate to emails: {email_registry.emails}')
-    return jsonify(msg_sent=True)
+    res = {
+        "data": {
+            "currency_from": msg.get('currency_from'),
+            "currency_to": msg.get('currency_to'),
+            "timestamp": msg.get('timestamp'),
+        },
+        "message": "exchange rate info sent to the subscribed emails",
+        "status": "success"
+    }
+    return jsonify(res)
 
 
 @app.errorhandler(Conflict)

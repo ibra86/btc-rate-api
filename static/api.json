@@ -36,7 +36,7 @@
           "200": {
             "description": "Повертається актуальний курс BTC до UAH",
             "schema": {
-              "type": "integer"
+              "type": "object"
             }
           },
           "400": {
