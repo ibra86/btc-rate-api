@@ -64,7 +64,7 @@ def send_emails(currency_from, currency_to):
     msg = api.get_msg(currency_from, currency_to)
     m = Message(subject=f'Rate for {currency_from}/{currency_to}',
                 body=json.dumps(msg, indent=4),
-                sender=app.config['MAIL_USERNAME'],
+                sender=('BTC Rate App', app.config['MAIL_USERNAME']),
                 recipients=email_registry.emails)
     mail.send(m)
     logger.info(f'sent currency rate to emails: {email_registry.emails}')
